@@ -1,5 +1,6 @@
 import type { Writable } from 'node:stream';
 import debugPackage from 'debug';
+import * as prompts from '@clack/prompts';
 import { getEventPrefix, type LogMessage, type LogWritable, levels } from './core.js';
 
 type ConsoleStream = Writable & {
@@ -13,10 +14,18 @@ export const nodeLogDestination: LogWritable<LogMessage> = {
 			dest = process.stdout;
 		}
 		let trailingLine = event.newLine ? '\n' : '';
-		if (event.label === 'SKIP_FORMAT') {
-			dest.write(event.message + trailingLine);
+		let logLevel: keyof typeof prompts.log;
+		if (event.level === 'debug' || event.level === 'silent') {
+			logLevel = 'info';
 		} else {
-			dest.write(getEventPrefix(event) + ' ' + event.message + trailingLine);
+			logLevel = event.level;
+		}
+		if (event.label === 'SKIP_FORMAT') {
+			prompts.log[logLevel](event.message + trailingLine, { output: dest });
+		} else {
+			prompts.log[logLevel](getEventPrefix(event) + ' ' + event.message + trailingLine, {
+				output: dest,
+			});
 		}
 		return true;
 	},

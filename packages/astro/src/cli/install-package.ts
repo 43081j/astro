@@ -79,9 +79,9 @@ async function installPackage(
 			'If you skip this step, you can always run it yourself later',
 		)}`,
 	);
-prompts.box(coloredOutput, undefined, {
+	prompts.box(coloredOutput, undefined, {
 		contentPadding: 0.5,
-		rounded: true
+		rounded: true,
 	});
 
 	let response;
@@ -89,9 +89,9 @@ prompts.box(coloredOutput, undefined, {
 		response = true;
 	} else {
 		const promptResponse = await prompts.confirm({
-				message: 'Continue?',
-				initialValue: true,
-			});
+			message: 'Continue?',
+			initialValue: true,
+		});
 		response = promptResponse === true;
 	}
 

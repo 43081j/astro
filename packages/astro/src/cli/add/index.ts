@@ -363,10 +363,12 @@ export async function add(names: string[], { flags }: AddOptions) {
 			if (integrations.find((integration) => integration.integrationName === 'tailwind')) {
 				const code = prompts.box(
 					'src/layouts/Layout.astro',
-					getDiffContent('---\n---', "---\nimport '../styles/global.css'\n---")!, {
-					titlePadding: 0.5,
-					rounded: true
-				});
+					getDiffContent('---\n---', "---\nimport '../styles/global.css'\n---")!,
+					{
+						rounded: true,
+						includePrefix: true,
+					},
+				);
 				logger.warn(
 					'SKIP_FORMAT',
 					msg.actionRequired(
@@ -564,13 +566,10 @@ async function updateAstroConfig({
 		`\n  ${magenta('Astro will make the following changes to your config file:')}`,
 	);
 
-	prompts.box(
-		configURL.pathname.split('/').pop(),
-		diff, {
-			contentPadding: 0.5,
-			rounded: true
-		}
-	);
+	prompts.box(configURL.pathname.split('/').pop(), diff, {
+		rounded: true,
+		includePrefix: true,
+	});
 
 	if (logAdapterInstructions) {
 		logger.info(
@@ -675,15 +674,11 @@ async function tryToInstallIntegrations({
 	);
 
 	const coloredOutput = `${bold(installCommand.command)} ${installCommand.args.join(' ')} ${cyan(installSpecifiers.join(' '))}`;
-	logger.info(
-		'SKIP_FORMAT',
-		`\n  ${magenta('Astro will run the following command:')}\n  ${dim(
-			'If you skip this step, you can always run it yourself later',
-		)}`,
-	);
+	logger.info('SKIP_FORMAT', magenta('Astro will run the following command:'));
+	logger.info('SKIP_FORMAT', dim('If you skip this step, you can always run it yourself later'));
 	prompts.box(coloredOutput, undefined, {
-		contentPadding: 0.5,
 		rounded: true,
+		includePrefix: true,
 	});
 
 	if (await askToContinue({ flags })) {
@@ -877,11 +872,9 @@ async function updateTSConfig(
 		`\n  ${magenta(`Astro will make the following changes to your ${configFileName}:`)}`,
 	);
 
-	prompts.box(diff,
-		configFileName,
-		{
-		contentPadding: 0.5,
-			rounded: true
+	prompts.box(diff, configFileName, {
+		includePrefix: true,
+		rounded: true,
 	});
 
 	// Every major framework, apart from Vue and Svelte requires different `jsxImportSource`, as such it's impossible to config
